@@ -49,10 +49,9 @@ function createHapContainer(containers, files) {
     filepathToContent: files,
   });
 
-    for (var index in containers) {
-	var c = containers[index];
-	c.allowFrom(haproxy, internalPort);
-    }
+  containers.forEach((c) => {
+    c.allowFrom(haproxy, internalPort);
+  });
 
   return haproxy;
 }
@@ -93,12 +92,11 @@ function createBackendConfig(name, containers, balance) {
     balance ${balance}
     cookie SERVERID insert indirect nocache`;
 
-    for (var index in containers) {
-	var c = containers[index];
-	
-	const addr = c.getHostname();
-	config += `server ${addr} ${addr}:${internalPort} check resolvers dns cookie ${addr}`;
-    }
+  containers.forEach((c) => {
+    const addr = c.getHostname();
+    config += `
+    server ${addr} ${addr}:${internalPort} check resolvers dns cookie ${addr}`;
+  });
 
   return config;
 }
